@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, View, Button } from "react-native";
+import { StyleSheet, Text, View, Button, CameraRoll } from "react-native";
 
 import {
   createDrawerNavigator,
@@ -7,64 +7,6 @@ import {
   createAppContainer
 } from "react-navigation";
 import Icon from "react-native-vector-icons/FontAwesome";
-
-import Constants from "expo-constants";
-import * as Permissions from "expo-permissions";
-
-import { BarCodeScanner } from "expo-barcode-scanner";
-
-class BarcodeScannerExample extends Component {
-  state = {
-    hasCameraPermission: null,
-    scanned: false
-  };
-
-  async componentDidMount() {
-    this.getPermissionsAsync();
-  }
-
-  getPermissionsAsync = async () => {
-    const { status } = await Permissions.askAsync(Permissions.CAMERA);
-    this.setState({ hasCameraPermission: status === "granted" });
-  };
-
-  render() {
-    const { hasCameraPermission, scanned } = this.state;
-
-    if (hasCameraPermission === null) {
-      return <Text>Requesting for camera permission</Text>;
-    }
-    if (hasCameraPermission === false) {
-      return <Text>No access to camera</Text>;
-    }
-    return (
-      <View
-        style={{
-          flex: 1,
-          flexDirection: "column",
-          justifyContent: "flex-end"
-        }}
-      >
-        <BarCodeScanner
-          onBarCodeScanned={scanned ? undefined : this.handleBarCodeScanned}
-          style={StyleSheet.absoluteFillObject}
-        />
-
-        {scanned && (
-          <Button
-            title={"Tap to Scan Again"}
-            onPress={() => this.setState({ scanned: false })}
-          />
-        )}
-      </View>
-    );
-  }
-
-  handleBarCodeScanned = ({ type, data }) => {
-    this.setState({ scanned: true });
-    alert(`Bar code with type ${type} and data ${data} has been scanned!`);
-  };
-}
 
 class Header extends Component {
   render() {
@@ -82,34 +24,6 @@ class Header extends Component {
   }
 }
 
-class ScanScreen extends Component {
-  onSuccess = e => {
-    Linking.openURL(e.data).catch(err =>
-      console.error("An error occured", err)
-    );
-  };
-
-  render() {
-    return (
-      <QRCodeScanner
-        onRead={this.onSuccess}
-        topContent={
-          <Text style={styles.centerText}>
-            Go to{" "}
-            <Text style={styles.textBold}>wikipedia.org/wiki/QR_code</Text> on
-            your computer and scan the QR code.
-          </Text>
-        }
-        bottomContent={
-          <TouchableOpacity style={styles.buttonTouchable}>
-            <Text style={styles.buttonText}>OK. Got it!</Text>
-          </TouchableOpacity>
-        }
-      />
-    );
-  }
-}
-
 class HomeScreen extends Component {
   render() {
     return (
@@ -119,7 +33,7 @@ class HomeScreen extends Component {
           style={styles.header}
         />
         <View style={styles.container}>
-          <BarcodeScannerExample />
+          <Text onClick={CameraRoll.getPhotos({ first: 10 })}>Hi</Text>
         </View>
       </View>
     );
